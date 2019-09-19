@@ -38,4 +38,8 @@ For Python codes from Learn Python 3 The Hard Way
 [ex41.py](ex41.py): Learning how to read OOP code.  
 [ex42.py](ex42.py): is-a, has-a, objects, classes, inheritance.  
 [ex43.py](ex43.py): Space battleship game.  
-
+[ex44a.py](ex44a.py): Implicit inheritence.  
+[ex44b.py](ex44b.py): Overriding in inheritence.  
+[ex44c.py](ex44c.py): super() as scope resolution  
+[ex44d.py](ex44d.py): abc combined.  
+[ex44e.py](ex44e.py): composition  
