@@ -1,0 +1,186 @@
+Git fundamentals:
+
+Module 1:
+---------
+Git - Distributed Version control system.
+Supports multiple topologies:
+Centralized - common code base
+Heirarchical - Multiple branches. Periodic merge to main repository (Linux kernel development).
+Distributed - Multiple repository. Periodic pull to main if deemed fit (open source contributions).
+
+Advantages:
+- Backup is easy. Each clone is a full backup.
+- Reliable merges/branching.
+- Apply fix to appropriate branch.
+- Full local history (analysis easy) 
+
+Writen in perl and C.
+
+Mac installation:
+$ brew install git
+Or 
+$ DMG
+
+"git-core" linux package
+
+Git configuration:
+1. system level
+  git config --system
+  - /etc/gitconfig (or) c:\Program Files\Git\etc\gitconfig
+
+2. User level:
+  git config --global
+ - ~/.gitconfig (or) c:\user\<name>\.gitconfig
+ 
+3. Repository level:
+ git config
+ - .git/config in all repository
+ 
+
+$ git config --global --list
+$ git config --global core.autocrlf true  /* convert crlf(mostly used in windows) to lf(used in mac/linux) while pushing and convert back while pulling. Prefered on windows. */
+                                    input /* convert to lf while pushing but nothing on pulling (prefered on mac/linux) */
+	      					        false /* do not do anything(if doing development only on windows)  */
+								  
+
+
+repository level config > user level config > system level config
+
+
+
+Module 2:
+---------
+
+$ git init /* Initialize any directory as new git repository. */
+$ git status
+$ git add <file_name>
+$ git add -u /* adds updated tracked files */
+$ git commit -m "<message>"
+$ git log /* View committed changes */
+$ git diff <first 6 chars of change 1>..<first 6 chars of change 2>
+$ git diff HEAD~1..HEAD /* one commit back from head */
+equivalent to = git diff HEAD~1
+$ git add -A /* Add all the files including untracked files. */
+
+$ git checkout <file_name> /* Revert the changes in any file. Reverts to last committed change. */
+$ git reset --hard /* Revert multiple changes together. No need to do them one by one.  Discard any changes after the last change. */
+
+$ git reset --soft HEAD~1 /* Revert back to previous commit. Don't discard anything. Put them back in staging area. */
+
+$ git clean -n /* Remove temp files. Will just show what it would be doing. */
+$ git clean -f /* Actually perform the removal. */
+
+.gitignore file:
+=============================
+/log /* ignores any log directory in root of repository.(NOTE: Not the root of repository.) */
+log  /* ignores any log directory anywhere in repository. */
+=============================
+
+
+Module 3:
+---------
+
+$ git clone <url> /* download the entire history of the repository. Download all the commits. */
+$ git log --oneline /* Provide the one line summary of the commit. */
+$ git log --oneline | wc -l /* count the no of commites in repository. */
+$ git log --oneline --graph /* shows branches and merges that have happened. */
+$ git shortlog /* Short command for git log --format=short. Provides the authors with their commites to the branch along with the no. of commits each made. */
+$ git shortlog -sn /* -s summary, don't show commit messages. -n sort them by no of commits. -e Include user's email addresses. */
+$ git show HEAD /* Show the last commit made to the repository */
+$ git show <7 digit hash> /* show commited changes */
+$ git remote /* Shows what is in remote location. */ /* Origin is default */
+$ git remote -v /* shows both push and pull */
+
+Git Protocols:
+https - 80/443 read-write access. Password for authentication.
+git   - 9418   Read only. Anonymous
+ssh   - 22     Read-write access. Uses ssh keys for authentication.
+file  - na     read-write access. Local repository.
+
+
+$ git branch /* Shows local branch you're working on */
+$ git branch -r /* Shows remote branches */
+$ git tag /* Shows known points in code base tag versions */
+$ git remote add origin https://github.com/AnuragTomer/practice_coding /* origin is arbitarary name */
+$ git fetch /* gets changes from remote */
+$ git fetch origin /* origin is the repository I want to fetch from. */
+$ git log origin/master /* commits to remote branch */
+$ git merge origin/master /* merge local to remote */
+$ git pull /* Equivalent to git fetch ; git merge origin/master */
+
+To set up upstream:
+$ git branch --set-upstream master origin/master
+  OR
+$ git pull origin master
+
+$ git commit -am "<message>" /* commit any modified file with message <message> */
+$ git remoe rm origin /* remove remote origin */
+
+Setup ssh version to eliminate password authentication:
+
+$ git remote add origin git@github.com:anuragtomer/practice_coding.git /* this is ssh version of the url. Note that this has username as git. If I set up like this, it won't prompt me for a password everytime I push to remote branch */
+
+$ git tag v1.0 /* tag the current version as v1.0. */
+$ git tag -a v1.0_with_message /* add a message to the tag */
+$ git tag -s v1.0_signed /* add a signed tag */ /* Needs a passphrase to be setup */
+
+Verify the tags:
+$ git tag -v v1.0_with_message /* Error, no signatures found because we never added any passphrase for this */
+$ git tag -v v1.0_signed /* tells you signature match or not */
+
+Git doesnot push the tags by default. 
+$ git push --tags /* pushes the tags */
+
+
+---------
+Module 4:
+---------
+
+$ git log --graph --oneline --all --decorate /* --all - all branches. --decorate labels to commits */
+$ git config --global alias.lga "log --graph --oneline --all --decorate" /* setup aliases for git command. skip the git command in alias. alias is permanent. Anything after . would be actual alias for the command in "".*/
+$ git lga /* does the same as git log --graph --oneline --all --decorate */
+
+Add branches:
+
+$ git branch feature1 /* branching takes you to the new branch */
+Any commits post branching would apply to the new branch. The head of origin would stay where it was before branching.
+tag is kind of a friendly name for sha-1 hash of commit.
+$ git checkout master /* load master branch. */
+
+To branch off at a particular commit point, use its hash.
+$ git branch fix1 <7 digit hash or tag> /* Note that this won't move my current workspace to this commit. It only creates a new branch. To go to that branch, you have to checkout specifically. */
+$ git checkout fix1
+$ git branch -m fix1 bug1234 /* rename '-m' */
+$ git branch -d bug1234 /* delete the branch bug1234. Git will prevent from doing this if this has not been merged to master branch */
+$ git branch -D bug1234 /* Force this deletion */
+$ git checkout -b feature2 /* create a new branch and load that branch. Merges branch and checkout options */
+$ git reflog /* Print where all head has pointed to till now */
+$ git branch bug1234 <hash> /* recall deleted branch. bug1234 is new name, need not be same as previous deleted branch name. */ /* Git keeps these deleted branches for max 30 days. */
+
+/* Stashing */
+$ git stash /* save pending changes */
+$ git stash list /* shows pending changes */
+$ git stash apply /* bring back pending changes */ /* doesnot delete the stash. Just loads it */
+$ git stash pop /* bring back pending changes and delete the stash */
+$ git stash drop /* deletes the top most stash */
+$ git stash branch /* creates a new branch from that stash */ /* pops the stash */
+
+
+/* Merging */
+$ git merge branch1 /* merges to origin/master*/ /* must be on the target branch */
+$ git branch -d branch1 /* delete the branch since it has been merged */
+
+$ git mergetool /* loads up mergetool to see which conflicts are there */
+$ git diff --cached /* shows up diff */
+
+$ git rebase master /* relocate the spinoff point of the branch to master head */
+/* might have conflics. Resolve */
+$ git rebase --continue /* continue the merge after reloving conflicts */
+
+$ git cherry-pick <hash> /* pull out just one commit to master branch from parallel branches */
+git won't apply same changes twice in case of merging.
+$ git push origin v1.0 /* creates a new branch on remote. Origin is remote branch you want to push to. v1.0 is the local branch you want to push. */
+$ git push origin v1.0:abcd /* push v1.0 to abcd on remote */
+$ git push origin :abcd /* deletes abcd on remote */
+
+
